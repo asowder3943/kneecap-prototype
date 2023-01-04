@@ -1,0 +1,45 @@
+<div>
+    <div class="row" style="max-width: 475px;">
+        <div class="col">
+            <h4>
+                <apan class="fa fa-hdd-o"></apan> {{context.library_size}} GB
+            </h4>
+        </div>
+        <div class="col text-end">
+            <div class="btn-group" role="group">
+                <button class="btn fa fa-lg fa-refresh" onclick="refreshFeed()"></button>
+                <div class="dropdown">
+                    <button id='feed-order' class="btn fa fa-lg fa-cog dropdown-toggle" type="button"
+                        data-bs-toggle="dropdown">
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fa fa-check"></i>
+                                Hide Played Episodes
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" onclick="reverseFeed()">
+                                {% if context.feed_order == 'chronological' %}
+                                <i class="fa fa-check"></i>
+                                {% else %}
+                                <i class="fa fa-check" style="opacity: 0;"></i>
+                                {% endif %}
+                                Oldest To Newest
+                                <i class="fa fa-long-arrow-up"></i>
+                                <i class="fa fa-long-arrow-down"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for video in context.videos %}
+    <div id="feed-item-{{video.id}}" style="max-width: 550px;">
+        {% include "feed-item.html" with video=video%}
+    </div>
+    {% endfor %}
+</div>

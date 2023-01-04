@@ -1,0 +1,75 @@
+<div>
+    <div class="row mt-4 ">
+
+        <div class="col-4 mt-auto mb-auto itemsContainer" style="max-width: 110px;">
+            {% if video.hires_downloaded%}
+            <!-- -->
+            <img class="image" src="{{video.channel.thumbnail}}"></img>
+            {% else %}
+            <img class="image" src="{{video.channel.thumbnail}}"></img>
+            {% endif %}
+            <div class="play">
+                <button
+                    class="image"
+                    style="background: url('https://www.freeiconspng.com/thumbs/play-button-icon-png/play-button-icon-png-0.png') no-repeat; cursor:pointer; border: none; height: 88px; width: 88px; background-size: 100%;"
+                    onclick="refreshPlayer('{{video.id}}')"> 
+                </button> 
+            </div>
+        </div>
+
+
+        <div class="col-8">
+            <div class="row">
+                <div class="col-6">
+                    {{video.date_posted.date}}
+                </div>
+                <div class="col-6 text-end">
+                    <div class="btn-group" role="group">
+
+                        <a class="btn fa fa-youtube-play" aria-hidden="true" href="{{video.youtube_url}}"
+                            style="color: red;"></a>
+
+                        {% if video.audio_downloaded %}
+                        <button class="btn fa fa-headphones" aria-hidden="true" style="color: blue;"></button>
+                        {% else %}
+                        <button class="btn fa fa-headphones" aria-hidden="true"
+                            onclick="download('{{video.id}}', 'audio_only')"></button>
+                        {% endif %}
+
+                        {% if video.hires_downloaded %}
+                        <button class="btn fa fa-arrow-circle-down" aria-hidden="true" style="color: blue;"></button>
+                        {% else %}
+                        <button class="btn fa fa-arrow-circle-down" aria-hidden="true"
+                            onclick="download('{{video.id}}', 'highest_resolution')"></button>
+                        {% endif %}
+
+                        <div class="dropdown">
+                            <button id='feed-item-details-{{ video.id }}' class="btn fa fa-ellipsis-h dropdown-toggle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    testing
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4>{{video.title}}</h4>
+            </div>
+            <div class="row">
+                {% if video.audio_downloaded %}
+                <audio controls>
+                    <source src="/media/{{video.id}}/audio/audio.mp4" type="audio/mp4">
+                </audio>
+                {% else %}
+                <audio controls>
+                    <source src="" type="audio/mp4">
+                </audio>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

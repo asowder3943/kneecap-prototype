@@ -1,0 +1,14 @@
+<div>
+    <table class="table">
+        {% for channel in context.results %}
+        <tr>
+            <td> <img src="{{channel.thumbnail}}">
+            </td>
+            <td> {{channel.title}}</td>
+            <td>
+                <button type="button" class="btn btn-primary fa fa-plus-circle" onclick="subscribe('{{channel.id}}')"></button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>

@@ -1,0 +1,18 @@
+<div>
+    <table class="table">
+        {% for channel in context.channels %}
+        <tr>
+            <td> <img src="{{channel.thumbnail}}">
+            </td>
+            <td> {{channel.title}}</td>
+            <td>
+                <div class="btn-group" role="group">
+                    <button type="button " class="btn btn-danger fa fa-lg fa-trash"
+                        onclick="unsubscribe('{{channel.id}}')"></button>
+                    <button class="btn fa fa-lg fa-cog"></button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
