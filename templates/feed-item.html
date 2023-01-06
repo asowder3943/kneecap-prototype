@@ -1,7 +1,7 @@
 <div>
+    {% if video.visible %}
     <div class="row mt-4 ">
-
-        <div class="col-4 mt-auto mb-auto itemsContainer" style="max-width: 110px;">
+        <div class="col-4 mt-auto mb-auto itemsContainer mr-1" style="max-width: 300px;">
             {% if video.hires_downloaded%}
             <!-- -->
             <img class="image" src="{{video.channel.thumbnail}}"></img>
@@ -43,16 +43,13 @@
                             onclick="download('{{video.id}}', 'highest_resolution')"></button>
                         {% endif %}
 
-                        <div class="dropdown">
-                            <button id='feed-item-details-{{ video.id }}' class="btn fa fa-ellipsis-h dropdown-toggle"
-                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    testing
-                                </li>
-                            </ul>
-                        </div>
+                        {% if video.played %}
+                        <button class="btn fa fa-undo" aria-hidden="true" onclick="togglePlayed('{{video.id}}')"></button>
+                        {% else %}
+                        <button class="btn fa fa-check-circle-o" aria-hidden="true"
+                            onclick="togglePlayed('{{video.id}}')"></button>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>
@@ -72,4 +69,6 @@
             </div>
         </div>
     </div>
+    {% else %}
+    {% endif %}
 </div>

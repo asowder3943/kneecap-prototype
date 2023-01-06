@@ -1,5 +1,5 @@
 <div>
-    <div class="row" style="max-width: 475px;">
+    <div class="row" style="max-width: 450px;">
         <div class="col">
             <h4>
                 <apan class="fa fa-hdd-o"></apan> {{context.library_size}} GB
@@ -14,11 +14,15 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <button class="dropdown-item" onclick="toggleHidePlayed()">
+                                {% if context.feed_settings.hide_played %}
                                 <i class="fa fa-check"></i>
+                                {% else %}
+                                <i class="fa fa-check" style="opacity: 0;"></i>
+                                {% endif %}
                                 Hide Played Episodes
-                                <i class="fa fa-eye"></i>
-                            </a>
+                                <i class="fa fa-eye-slash"></i>
+                            </button>
                         </li>
                         <li>
                             <button class="dropdown-item" onclick="reverseFeed()">
@@ -38,7 +42,7 @@
         </div>
     </div>
     {% for video in context.videos %}
-    <div id="feed-item-{{video.id}}" style="max-width: 550px;">
+    <div id="feed-item-{{video.id}}" style="max-width: 450px;">
         {% include "feed-item.html" with video=video%}
     </div>
     {% endfor %}

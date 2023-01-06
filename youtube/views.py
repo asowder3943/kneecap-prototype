@@ -93,3 +93,13 @@ def refresh_feed_item(request, id):
         "video": Video.objects.get(id=id)
     }
     return render(request, 'feed-item.html', context_wrapper)
+
+def toggle_played(request, id):
+    Video.objects.get(id=id).toggle_played()
+    return HttpResponse(status=200)
+
+
+def toggle_hide_played(request):
+    FeedSettings.get_solo().toggle_hide_played()
+    return HttpResponse(status=200)
+

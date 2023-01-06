@@ -28,6 +28,10 @@ class FeedSettings(SingletonModel):
         else:
             self.feed_order = self.CHRONOLOGICAL
             self.save()
+
+    def toggle_hide_played(self):
+        self.hide_played = not self.hide_played
+        self.save()
     
     def __str__(self):
         return "Feed Settings"
@@ -114,7 +118,16 @@ class Video(models.Model):
 
     def duration_string(self):
         return self.duration.replace('PT', '').replace('H', ' hr ').replace('M', ' min ').replace('S', ' s')
+
+    def toggle_played(self):
+        self.played = not self.played
+        self.save()
     
+    def visible(self):
+        if FeedSettings.get_solo().hide_played and self.played:
+            return False
+        else:
+            return True
 
     @classmethod
     def fetch(cls):
@@ -139,10 +152,16 @@ class Video(models.Model):
     
     @classmethod
     def feed(cls):
-        if FeedSettings.get_solo().feed_order == FeedSettings.CHRONOLOGICAL:
-            return  Video.objects.order_by('date_posted')
+        if FeedSettings.get_solo().hide_played:
+            videos = cls.objects.filter(played=False)
         else:
-            return  Video.objects.order_by('date_posted').reverse()
+            videos = cls.objects.all()
+
+
+        if FeedSettings.get_solo().feed_order == FeedSettings.CHRONOLOGICAL:
+            return  videos.order_by('date_posted')
+        else:
+            return  videos.order_by('date_posted').reverse()
 
     class Meta:
         ordering = ['date_posted']

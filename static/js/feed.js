@@ -10,6 +10,18 @@ async function download(video_id, download_type){
     })
 }
 
+async function togglePlayed(video_id){
+    fetch(`toggle-played/${video_id}`).then(async function() {
+        displayFeedItem(video_id)
+    })
+}
+
+async function toggleHidePlayed(){
+    fetch(`toggle-hide-played`).then(async function() {
+        displayFeed()
+    })
+}
+
 async function refreshPlayer(video_id) {
     fetch(`player/${video_id}`).then(async function (response) {
         player.innerHTML = await response.text()
