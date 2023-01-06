@@ -22,7 +22,7 @@
                         </li>
                         <li>
                             <button class="dropdown-item" onclick="reverseFeed()">
-                                {% if context.feed_order == 'chronological' %}
+                                {% if context.feed_settings.feed_order == context.feed_settings.CHRONOLOGICAL %}
                                 <i class="fa fa-check"></i>
                                 {% else %}
                                 <i class="fa fa-check" style="opacity: 0;"></i>

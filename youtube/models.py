@@ -3,63 +3,60 @@ from youtube.settings import api
 from django.utils import timezone
 from pytube import YouTube
 from os import removedirs
+from solo.models import SingletonModel
 
+class FeedSettings(SingletonModel):
+    CHRONOLOGICAL = 'CH'
+    REVERSE_CHRONOLOGICAL = 'RC'
+    FEED_ORDER_CHOICES = [
+        (CHRONOLOGICAL, 'Chronological'),
+        (REVERSE_CHRONOLOGICAL, 'Reverse Chronological'),
+    ]
 
-class Settings(models.Model):
-    key = models.CharField(verbose_name='Setting Key', max_length=255, unique=True)
-    value = models.CharField(verbose_name='Setting Value', max_length=255)
-    key_verbose = models.CharField(verbose_name='Setting Key Verbose Name', max_length=255)
-    value_verbose = models.CharField(verbose_name='Setting Value Verbose Name', max_length=255)
+    feed_order = models.CharField(
+        max_length=2,
+        choices=FEED_ORDER_CHOICES,
+        default=CHRONOLOGICAL,
+    )
 
-    @classmethod
-    def get(cls, key):
-        try: 
-            return cls.objects.get(key=key).value
-        except cls.DoesNotExist:
-            return ""
+    hide_played = models.BooleanField(default=False)
+
+    def reverse_feed_order(self):
+        if self.feed_order == self.CHRONOLOGICAL:
+            self.feed_order = self.REVERSE_CHRONOLOGICAL
+            self.save()
+        else:
+            self.feed_order = self.CHRONOLOGICAL
+            self.save()
     
-    @classmethod
-    def set_key(cls, key, value):
-        try: 
-            setting = cls.objects.get(key=key)
-            setting.value = value
-            setting.save()
-            return
-        except cls.DoesNotExist:
-            return
-    
-    @classmethod
-    def get_verbose(cls, key):
-        try: 
-            return cls.objects.get(key=key).value_verbose
-        except cls.DoesNotExist:
-            return ""
+    def __str__(self):
+        return "Feed Settings"
+
+    class Meta:
+        verbose_name = "Feed Settings"
 
 
-# Followable
 class Channel(models.Model):
     id = models.CharField(verbose_name="Youtube channel id", max_length=255, primary_key=True, unique=True)
     title = models.CharField(verbose_name="Youtube Channel Title", max_length=255, default = "")
     thumbnail = models.CharField(verbose_name="Youtube Channel Thumbnail", max_length=255, default="")
     plid = models.CharField(verbose_name="Youtube Channel Playlist id", max_length=255)
-
+    initialized = models.BooleanField(verbose_name="Youtube Channel Initialized", default=False)
+    
     def fetch(self):
         response = api.get_channel_info(channel_id=self.id).items[0]
         self.title = response.snippet.title
         self.thumbnail = response.snippet.thumbnails.default.url
         self.plid = response.contentDetails.relatedPlaylists.uploads
+        if not self.initialized:
+            self.initialized = True
         self.save()
 
-    def summary(self):
-        if self.title ==  "" or self.thumbnail == "" or self.plid == "":
-            self.fetch()
-        return {
-            "id": self.id,
-            "title": self.title,
-            "thumbnail": self.thumbnail,
-            "plid": self.plid
-        }
-
+    @classmethod
+    def create_by_id(cls,id):
+        channel = cls.objects.create(id=id)
+        channel.fetch()
+        
     class Meta:
         ordering = ['title']
 
@@ -78,7 +75,7 @@ class Video(models.Model):
     hires_downloaded = models.BooleanField(default=False, verbose_name="Youtube High Resolution Downloaded")
 
     # Played Status
-    mark_played = models.BooleanField(default=False, verbose_name="Youtube Video Maked as played")
+    played = models.BooleanField(default=False, verbose_name="Youtube Video Maked as played")
 
     # preform download and update download status
     def download(self, **kwargs):
@@ -87,7 +84,6 @@ class Video(models.Model):
         if kwargs.get('type_string') == 'highest_resolution':
             self.download(highest_resolution=True)
         if kwargs.get('audio_only'):
-            print('got here')
             if not self.audio_downloaded:
                 try:
                     YouTube(f'https://youtu.be/{self.id}').streams.filter(only_audio=True).first().download(output_path=f'media/{self.id}/audio/',  filename='audio.mp4')
@@ -108,8 +104,6 @@ class Video(models.Model):
                     self.save()
                     pass
 
-        
-    
     def remove_download(self):
         self.hires_downloaded = False
         self.audio_downloaded = False
@@ -120,6 +114,7 @@ class Video(models.Model):
 
     def duration_string(self):
         return self.duration.replace('PT', '').replace('H', ' hr ').replace('M', ' min ').replace('S', ' s')
+    
 
     @classmethod
     def fetch(cls):
@@ -144,17 +139,10 @@ class Video(models.Model):
     
     @classmethod
     def feed(cls):
-        if Settings.get('feed_order') == 'chronological':
+        if FeedSettings.get_solo().feed_order == FeedSettings.CHRONOLOGICAL:
             return  Video.objects.order_by('date_posted')
         else:
             return  Video.objects.order_by('date_posted').reverse()
-    
-    @classmethod
-    def reverse_feed(cls):
-        if Settings.get('feed_order') == 'chronological':
-            Settings.set_key('feed_order', 'latest')
-        else:
-            Settings.set_key('feed_order', 'chronological')
 
     class Meta:
         ordering = ['date_posted']
