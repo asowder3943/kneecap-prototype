@@ -29,7 +29,7 @@ SECRET_KEY = getenv('DJANGO_SECRET')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', '192.168.1.186']
+ALLOWED_HOSTS = [getenv('ALLOWED_HOST')]
 
 
 # Application definition
