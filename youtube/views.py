@@ -5,6 +5,11 @@ from django.http import HttpResponse
 from youtube.utill import get_size_gb
 from kneecap_backend.settings import MEDIA_ROOT
 
+
+def blank(request): 
+    return HttpResponse(status=200)
+
+
 def youtube(request): 
     # Video.fetch()
     context_wrapper = {
