@@ -1,7 +1,8 @@
 <div>
     {% if video.visible %}
-    <div class="row mt-4 ">
-        <div class="col-4 mt-auto mb-auto itemsContainer mr-1" style="max-width: 300px;">
+    <div class="row mt-4">
+        <div class="col mt-auto mb-auto itemsContainer" style="max-width: 100px;">
+        <!-- " margin-left: 33px; margin-right: 11px;"> -->
             {% if video.hires_downloaded%}
             <!-- -->
             <img class="image" src="{{video.channel.thumbnail}}"></img>
@@ -18,14 +19,13 @@
         </div>
 
 
-        <div class="col-8">
+        <div class="col">
             <div class="row">
-                <div class="col-6">
+                <div class="col-5 mt-1" style="font-size: small;">
                     {{video.date_posted.date}}
                 </div>
-                <div class="col-6 text-end">
+                <div class="col-7 text-end">
                     <div class="btn-group" role="group">
-
                         <a class="btn fa fa-youtube-play" aria-hidden="true" href="{{video.youtube_url}}"
                             style="color: red;"></a>
 
@@ -49,21 +49,20 @@
                         <button class="btn fa fa-check-circle-o" aria-hidden="true"
                             onclick="togglePlayed('{{video.id}}')"></button>
                         {% endif %}
-
                     </div>
                 </div>
             </div>
             <div class="row">
-                <h4>{{video.title}}</h4>
+                <h6>{{video.title}}</h6>
             </div>
             <div class="row">
                 {% if video.audio_downloaded %}
-                <audio controls>
+                <audio controls style="max-height:20px">
                     <source src="/media/{{video.id}}/audio/audio.mp4" type="audio/mp4">
                 </audio>
                 {% else %}
-                <audio controls>
-                    <source src="" type="audio/mp4">
+                <audio controls style="max-height:20px;">
+                    <source src="" type="audio/mp4" >
                 </audio>
                 {% endif %}
             </div>
