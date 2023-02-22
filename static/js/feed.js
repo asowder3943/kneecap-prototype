@@ -1,4 +1,5 @@
 async function refreshFeed() {
+    document.getElementById('feed-refresh-button').classList.add('fa-spin');
     fetch(`refresh`).then(async function () {
         displayFeed()
     })   
